@@ -11,8 +11,10 @@ import pokerEnums.eCardNo;
 import pokerEnums.eHandStrength;
 import pokerEnums.eRank;
 import pokerEnums.eSuit;
+import pokerBase.Card;
+import pokerBase.exHand;
 
-public class Hand extends Card {
+public class Hand {
 	private UUID playerID;
 	@XmlElement
 	private ArrayList<Card> CardsInHand;
@@ -130,9 +132,13 @@ public class Hand extends Card {
 		}
 		
 		if (CardsInHand.get(eCardNo.FifthCard.getCardNo()).getRank() == eRank.JOKER) {
-			for(int i = 0; i < 16; i++) {
-				for(int j = 0; i < 4; i++) {
-					CardsInHand.set(4, Card.Card(eSuit.DIAMONDS, eRank.EIGHT, 0));
+			for(eRank rank : eRank.values() ) {
+				for(eSuit suit: eSuit.values()) {
+					//Remove the Joker and replace it with all possible values, and recheck the hand
+					// If there is a second joker a second layer of recursion will trigger
+					CardsInHand.remove(eCardNo.FifthCard);
+					CardsInHand.add(4, new Card(suit, rank, false) );
+					EvalHand(CardsInHand);
 				}
 			}
 			
@@ -501,4 +507,28 @@ public class Hand extends Card {
 				return 0;
 		}
 	};
+	
+	public static Hand PickBestHand(ArrayList<Hand> Hands)
+		throws exHand {
+		int currentHighScore = 0;
+		int currentWinner = 0;
+		ArrayList<Integer> allScores = new ArrayList<Integer>();
+		// Loops through each hand and sees if the score is higher than the current highest
+		for(int i = 0; i < Hands.size();i++) {
+			Hands.get(i).EvalHand();
+			int score = Hands.get(i).getHandStrength();
+			allScores.add(score);
+			if (score > currentHighScore) {
+				currentWinner = i;
+				currentHighScore = score;
+			}
+			Collections.sort(allScores);
+			// If the two highest scores are the same then there is a tie and the exception is thrown
+			if (allScores.get(Hands.size() - 1) == allScores.get(Hands.size()-2))
+				throw new exHand(Hands.get(currentWinner));
+		}
+		
+		return Hands.get(currentWinner);
+		
+	}
 }
