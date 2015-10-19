@@ -30,16 +30,16 @@ public class Hand_Test {
 	@After
 	public void tearDown() throws Exception {
 	}
-
+	// TESTS TO SEE IF THE JOKER CARD WORKS FOR ROYAL FLUSH
 	@Test
-	public void RoyalFlush() {
+	public void RoyalFlush_WITH_Joker() {
 		Deck d = new Deck();
 		Hand h = new Hand();
 		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.TEN,0));
 		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.JACK,0));
 		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.QUEEN,0));
 		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.KING,0));
-		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.ACE,0));
+		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.JOKER,0));
 		h.EvalHand();
 		
 		assertTrue(h.getHandStrength() == eHandStrength.RoyalFlush.getHandStrength());
@@ -321,6 +321,33 @@ public class Hand_Test {
 		assertTrue(c4.getRank().getRank() == eRank.TWO.getRank());
 
 	}		
+	
+	@Test 
+	public void fiveOfAKind() {
+		Deck d = new Deck();
+		Hand h = new Hand();
+		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.TEN,0));
+		h.AddCardToHand(new Card(eSuit.DIAMONDS,eRank.TEN,0));
+		h.AddCardToHand(new Card(eSuit.SPADES,eRank.TEN,0));
+		h.AddCardToHand(new Card(eSuit.HEARTS,eRank.TEN,0));
+		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.TEN,0));
+		h.EvalHand();
+		assertTrue(h.getHandStrength() == eHandStrength.FiveOfAKind.getHandStrength());
+	}
+	// Tests the natural royal flush
+	@Test
+	public void NaturalRoyalFlush() {
+		Deck d = new Deck();
+		Hand h = new Hand();
+		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.TEN,0));
+		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.JACK,0));
+		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.QUEEN,0));
+		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.KING,0));
+		h.AddCardToHand(new Card(eSuit.CLUBS,eRank.ACE,0));
+		h.EvalHand();
+		
+		assertTrue(h.getHandStrength() == eHandStrength.NaturalRoyalFlush.getHandStrength());
+	}
 }
 
 
